@@ -10,6 +10,8 @@
 
 <p align="center"><img align="center" src="https://res.cloudinary.com/chaca-sa/image/upload/v1682915008/95bc112f-b9d9-44f9-9a29-b8157a92506f_jmkats.webp" style="width: 300px"/></p>
 
+<br/>
+
 > ### 😹 Chistecillo
 > ¿Qué le dice un huevo a una sartén? Me tienes frito.
 
@@ -21,6 +23,8 @@
 
 - Crear el entorno virtual con `conda create <nombre_entorno>` o crearlo en el PyCharm directamente
 - Instalar los paquetes `rich` y `numpy` en el entorno virtual con `pip install rich` y `pip install numpy`
+
+<br/>
 
 > ### 😹 Chistecillo
 > ¿Cómo se llama el campeón de buceo japonés? Tokofondo. ¿Y el subcampeón? Kasitoko.
