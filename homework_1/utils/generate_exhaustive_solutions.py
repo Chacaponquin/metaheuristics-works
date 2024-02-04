@@ -2,7 +2,7 @@ import numpy as np
 from itertools import product
 
 
-def generate_solutions(step: float) -> list[list[float]]:
+def generate_exhaustive_solutions(step: float) -> list[list[float]]:
     return_data = []
 
     valors = np.arange(0, 1.1, step)

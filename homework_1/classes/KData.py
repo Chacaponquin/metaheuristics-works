@@ -1,4 +1,5 @@
 import random
+from homework_1.utils.generate_solution import generate_solution
 
 
 class KData:
@@ -7,7 +8,7 @@ class KData:
 
     def __init__(self, step: float):
         self.step = step
-        self.ks = self.generate_solution(self.step)
+        self.ks = generate_solution(self.step)
 
     @property
     def k1(self):
@@ -38,27 +39,14 @@ class KData:
 
     def _up_k(self, index: int):
         if self.ks[index] < self.LIMIT_UP:
-            self.ks[index] = self._round(self.ks[index] + self.step)
+            self.ks[index] = self.round(self.ks[index] + self.step)
 
     def _down_k(self, index: int):
         if self.ks[index] > self.LIMIT_DOWN:
-            self.ks[index] = self._round(self.ks[index] - self.step)
+            self.ks[index] = self.round(self.ks[index] - self.step)
 
     @staticmethod
-    def _round(value):
+    def round(value):
         return round(value, 1)
 
-    @staticmethod
-    def generate_solution(step: float):
-        return [KData._gen_value(step) for _ in range(5)]
 
-    @staticmethod
-    def _gen_value(step: float) -> float:
-        choices = []
-        value = 0.0
-
-        while value < KData.LIMIT_UP:
-            choices.append(value)
-            value = KData._round(value + step)
-
-        return random.choice(choices)
