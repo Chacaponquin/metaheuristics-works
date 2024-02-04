@@ -7,7 +7,7 @@ class KData:
 
     def __init__(self, step: float):
         self.step = step
-        self.ks = [self.gen_value() for _ in range(5)]
+        self.ks = self.generate_solution(self.step)
 
     @property
     def k1(self):
@@ -31,7 +31,7 @@ class KData:
 
     def change_k_values(self, error: float):
         choice = random.randint(0, 4)
-        if error > 0:
+        if error < 0:
             self._down_k(choice)
         else:
             self._up_k(choice)
@@ -44,15 +44,21 @@ class KData:
         if self.ks[index] > self.LIMIT_DOWN:
             self.ks[index] = self._round(self.ks[index] - self.step)
 
-    def _round(self, value):
+    @staticmethod
+    def _round(value):
         return round(value, 1)
 
-    def gen_value(self) -> float:
+    @staticmethod
+    def generate_solution(step: float):
+        return [KData._gen_value(step) for _ in range(5)]
+
+    @staticmethod
+    def _gen_value(step: float) -> float:
         choices = []
         value = 0.0
 
-        while value < self.LIMIT_UP:
+        while value < KData.LIMIT_UP:
             choices.append(value)
-            value = self._round(value + self.step)
+            value = KData._round(value + step)
 
         return random.choice(choices)

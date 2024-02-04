@@ -1,4 +1,4 @@
-from homework_1.classes import Data, KData
+from homework_1.classes import Data
 
 
 def function(k_data: list[float], data: list[Data]):
