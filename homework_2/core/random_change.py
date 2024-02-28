@@ -17,8 +17,12 @@ def random_change(ks: list[float], step: float) -> list[float]:
 def up_k(ks: list[float], index: int, step: float):
     if ks[index] < KData.LIMIT_UP:
         ks[index] = KData.round(ks[index] + step)
+    else:
+        ks[index] = KData.LIMIT_DOWN
 
 
 def down_k(ks: list[float], index: int, step: float):
     if ks[index] > KData.LIMIT_DOWN:
         ks[index] = KData.round(ks[index] - step)
+    else:
+        ks[index] = KData.LIMIT_UP

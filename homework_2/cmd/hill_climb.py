@@ -7,7 +7,7 @@ def main():
     step = 0.1
 
     test_1 = MhHillClimb(data=data, step=step)
-    test_1.run(iterations=2000)
+    test_1.run(max_trials=10000)
 
 
 if __name__ == '__main__':

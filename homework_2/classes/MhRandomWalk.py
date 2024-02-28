@@ -3,7 +3,7 @@ from homework_2.classes import Data
 
 
 class MhRandomWalk:
-    def __init__(self, data: list[Data], step: int):
+    def __init__(self, data: list[Data], step: float):
         self.step = step
         self.data = data
 
@@ -14,7 +14,7 @@ class MhRandomWalk:
         last_solution = best_solution
         for i in range(1, iterations):
             solution: list[float] = random_change(ks=last_solution.copy(), step=self.step)
-            evaluation = function(k_data=solution, data=self.data)
+            evaluation: float = function(k_data=solution, data=self.data)
             last_solution = solution
 
             if abs(evaluation) < abs(best_evaluation):
