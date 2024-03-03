@@ -1,3 +1,1 @@
-from homework_1.cmd.heuristic_search import heuristic_search
-from homework_1.cmd.exhaustive_search import exhaustive_search
-from homework_1.cmd.random_search import random_search
+

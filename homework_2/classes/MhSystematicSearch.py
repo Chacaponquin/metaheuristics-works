@@ -1,13 +1,26 @@
 from homework_2.classes import Data, KData
-from homework_2.core import random_solution, function, not_random_solution, not_random_change
+from homework_2.utils import is_better_than
 from rich.table import Table
 from rich.console import Console
+from typing import Callable
 
 
 class MhSystematicSearch:
-    def __init__(self, data: list[Data], step: float):
+    def __init__(
+            self,
+            data: list[Data],
+            step: float,
+            random_solution: Callable[[float], list[float]],
+            not_random_change: Callable[[list[float], float, float, float], list[float]],
+            not_random_solution: Callable[[float], list[float]],
+            objective_function: Callable[[list[float], list[Data]], float]
+    ):
+        self.objective_function = objective_function
         self.step = step
         self.data = data
+        self.random_solution = random_solution
+        self.not_random_change = not_random_change
+        self.not_random_solution = not_random_solution
 
         self.OBJECTIVE_MAX = False
 
@@ -21,10 +34,10 @@ class MhSystematicSearch:
         table.add_column('Best Solution')
 
         if systematic_s_ini:
-            best_solution = not_random_solution(min_value=KData.LIMIT_DOWN)
+            best_solution = self.not_random_solution(KData.LIMIT_DOWN)
         else:
-            best_solution = random_solution(step=self.step)
-        best_evaluation = function(k_data=best_solution, data=self.data)
+            best_solution = self.random_solution(self.step)
+        best_evaluation = self.objective_function(best_solution, self.data)
 
         # add row
         table.add_row(
@@ -37,21 +50,26 @@ class MhSystematicSearch:
 
         solution = best_solution.copy()
         for i in range(1, max_trials):
-            solution: list[float] = not_random_change(
-                solution=solution,
-                step=self.step,
-                max_value=KData.LIMIT_UP,
-                min_value=KData.LIMIT_DOWN
+            solution: list[float] = self.not_random_change(
+                solution,
+                KData.LIMIT_UP,
+                KData.LIMIT_DOWN,
+                self.step
             )
 
-            evaluation: float = function(k_data=solution, data=self.data)
+            evaluation: float = self.objective_function(solution, self.data)
 
-            if self.is_better_than(evaluation, best_evaluation):
+            if is_better_than(evaluation, best_evaluation, self.OBJECTIVE_MAX):
                 best_evaluation = evaluation
                 best_solution = solution.copy()
 
             # add row
-            table.add_row(str(i + 1), str(solution), str(evaluation), str(best_evaluation), str(best_solution))
+            table.add_row(
+                str(i + 1),
+                str(solution),
+                str(evaluation),
+                str(best_evaluation),
+                str(best_solution))
 
             if not bool(evaluation):
                 break
@@ -61,6 +79,3 @@ class MhSystematicSearch:
 
         return best_solution
 
-    def is_better_than(self, evaluation1: float, evaluation2: float):
-        greater1 = abs(evaluation1) > abs(evaluation2)
-        return (((evaluation1 == evaluation2)) or (self.OBJECTIVE_MAX) and greater1) or (not (self.OBJECTIVE_MAX) and not greater1)

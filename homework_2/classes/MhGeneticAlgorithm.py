@@ -1,15 +1,25 @@
 import random
 from homework_2.classes import Data
-from homework_2.core import random_solution, function, random_combination
 from homework_2.utils import insert_sorted
 from rich.table import Table
 from rich.console import Console
+from typing import Callable
 
 
 class MhGeneticAlgorithm:
-    def __init__(self, data: list[Data], step: float):
+    def __init__(
+            self,
+            data: list[Data],
+            step: float,
+            random_solution: Callable[[float], list[float]],
+            random_combination: Callable[[list[float], list[float]], list[float]],
+            objective_function: Callable[[list[float], list[Data]], float]
+    ):
+        self.objective_function = objective_function
         self.step = step
         self.data = data
+        self.random_solution = random_solution
+        self.random_combination = random_combination
 
         self.OBJECTIVE_MAX = False  # goal of the optimization, True: maximization, False: minimization
 
@@ -24,9 +34,14 @@ class MhGeneticAlgorithm:
         solutions = []
 
         for i in range(generation_size):
-            solution = random_solution(step=self.step)
-            evaluation = function(k_data=solution, data=self.data)
-            solutions = self.insert_sorted(solutions, [evaluation, solution], best_references)
+            solution = self.random_solution(self.step)
+            evaluation = self.objective_function(solution, self.data)
+            solutions = insert_sorted(
+                solutions,
+                [evaluation, solution],
+                best_references,
+                self.OBJECTIVE_MAX
+            )
 
         for g in range(1, int(max_trials / generation_size)):
             new_solutions = []
@@ -36,8 +51,8 @@ class MhGeneticAlgorithm:
                 parent2 = random.randint(0, best_references)
 
                 # a combination of two of the best solutions
-                solution = random_combination(solution=solutions[parent1][1].copy(), solution_alt=solutions[parent2][1].copy())
-                evaluation = function(k_data=solution, data=self.data)
+                solution = self.random_combination(solutions[parent1][1].copy(), solutions[parent2][1].copy())
+                evaluation = self.objective_function(solution, self.data)
                 new_solutions = insert_sorted(
                     new_solutions,
                     [evaluation, solution],
