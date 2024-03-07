@@ -1,5 +1,5 @@
 import random
-from homework_2.classes import KData, Data
+from domain import KData
 
 
 ## MUTATION
@@ -33,10 +33,10 @@ def add_one_minus_one(ks: list[float], step: float) -> list[float]:
 
 # next list (not random)
 def next_list(
-        solution: list[float],
-        max_value: float,
-        min_value: float,
-        step: float
+    solution: list[float],
+    max_value: float,
+    min_value: float,
+    step: float
 ) -> list[float]:
     j = 4
     while (solution[j] == max_value) and j >= 0:
@@ -101,21 +101,3 @@ def random_crossing(solution: list[float], solution_alt: list[float]):
             solution[i] = solution_alt[i]
 
     return solution.copy()
-
-
-## OBJECTIVE FUNCTION
-def objective_function(k_data: list[float], data: list[Data]):
-    error = 0
-    k1, k2, k3, k4, k5 = k_data
-
-    for i in range(len(data)):
-        if i != 0:
-            p = (k1 * data[i - 1].data[0] +
-                 k2 * data[i - 1].data[1] +
-                 k3 * data[i - 1].data[2] +
-                 k4 * data[i - 1].data[3] +
-                 k5 * data[i - 1].data[4])
-
-            error += data[i].data[5] - p
-
-    return round(error, 4)
