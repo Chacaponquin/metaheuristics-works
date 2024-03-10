@@ -4,6 +4,68 @@ from typing import Callable
 from utils import insert_sorted
 
 
+# RANDOM SEARCH
+class MhRandomSearch:
+    def __init__(
+            self,
+            data: list[Data],
+            step: float,
+            random_solution: Callable[[float], list[float]],
+            objective_function: Callable[[list[float], list[Data]], float],
+            max_trials: int
+    ):
+        self.objective_function = objective_function
+        self.step = step
+        self.data = data
+        self.random_solution = random_solution
+        self.max_trials = max_trials
+
+    def print(
+            self,
+            iteration: int,
+            solution: list[float],
+            error: float,
+            best_error: float,
+            best_solution: list[float]
+    ):
+        print(f"{iteration}: Solution: {solution}, Error: {error}, Best error: {best_error}, Best solution: {best_solution}")
+
+    def run(self) -> list[float]:
+        print('Random Search')
+
+        best_solution: list[float] = self.random_solution(self.step)
+        best_evaluation: float = self.objective_function(best_solution, self.data)
+
+        self.print(
+            0,
+            best_solution.copy(),
+            best_evaluation,
+            best_evaluation,
+            best_solution.copy()
+        )
+
+        for i in range(1, self.max_trials):
+            solution: list[float] = self.random_solution(self.step)
+            evaluation: float = self.objective_function(solution, self.data)
+
+            if abs(evaluation) < abs(best_evaluation):
+                best_evaluation = evaluation
+                best_solution = solution
+
+            self.print(
+                i + 1,
+                solution.copy(),
+                evaluation,
+                best_evaluation,
+                best_solution.copy()
+            )
+
+            if not bool(evaluation):
+                break
+
+        return best_solution
+
+
 # P-HEURISTIC
 class MhEvolutionStrategy:
     def __init__(
@@ -12,13 +74,15 @@ class MhEvolutionStrategy:
         step: float,
         random_change: Callable[[list[float], float], list[float]],
         random_solution: Callable[[float], list[float]],
-        objective_function: Callable[[list[float], list[Data]], float]
+        objective_function: Callable[[list[float], list[Data]], float],
+        max_trials: int
     ):
         self.objective_function = objective_function
         self.step = step
         self.data = data
         self.random_change = random_change
         self.random_solution = random_solution
+        self.max_trials = max_trials
 
         self.OBJECTIVE_MAX = False
 
@@ -27,7 +91,6 @@ class MhEvolutionStrategy:
         generational: bool,
         generation_size: int,
         best_references: int,
-        max_trials: int
     ) -> list[float]:
         print('Evolution Strategy')
 
@@ -42,7 +105,7 @@ class MhEvolutionStrategy:
                 self.OBJECTIVE_MAX
             )
 
-        for g in range(0, int(max_trials / generation_size)):
+        for g in range(0, int(self.max_trials / generation_size)):
             new_solutions = []
 
             for i in range(generation_size):
@@ -75,12 +138,13 @@ class MhEvolutionStrategy:
 # S-HEURISTIC
 class MhHillClimb:
     def __init__(
-            self,
-            data: list[Data],
-            step: float,
-            random_change: Callable[[list[float], float], list[float]],
-            random_solution: Callable[[float], list[float]],
-            objective_function: Callable[[list[float], list[Data]], float]
+        self,
+        data: list[Data],
+        step: float,
+        random_change: Callable[[list[float], float], list[float]],
+        random_solution: Callable[[float], list[float]],
+        objective_function: Callable[[list[float], list[Data]], float],
+        max_trials: int,
     ):
         self.objective_function = objective_function
         self.data = data
@@ -88,6 +152,8 @@ class MhHillClimb:
 
         self.random_change = random_change
         self.random_solution = random_solution
+
+        self.max_trials = max_trials
 
     def print(
             self,
@@ -97,9 +163,9 @@ class MhHillClimb:
             best_error: float,
             best_solution: list[float]
     ):
-        print(f"{iteration}: Solution: {solution}, Error: {error}, Best error: {best_error}, Best solution: {best_solution}")
+        print(f"{iteration}: Solution: {solution.copy()}, Error: {error}, Best error: {best_error}, Best solution: {best_solution.copy()}")
 
-    def run(self, max_trials: int) -> list[float]:
+    def run(self) -> list[float]:
         print('Hill Climb')
 
         best_solution: list[float] = self.random_solution(self.step)
@@ -113,7 +179,7 @@ class MhHillClimb:
             best_solution
         )
 
-        for i in range(max_trials):
+        for i in range(self.max_trials):
             solution: list[float] = self.random_change(best_solution.copy(), self.step)
             evaluation: float = self.objective_function(solution, self.data)
 

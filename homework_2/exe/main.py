@@ -1,4 +1,4 @@
-from mh import MhHillClimb, MhEvolutionStrategy
+from mh import MhHillClimb, MhEvolutionStrategy, MhRandomSearch
 from problemMilitaryBudget import random_change, random_solution, objective_function
 from utils import read_data
 from domain import Data
@@ -6,6 +6,7 @@ from domain import Data
 
 def main():
     data: list[Data] = read_data()
+    max_trials = 1000
     step = 0.1
 
     # ejecutar escalador de colina
@@ -14,12 +15,13 @@ def main():
         data=data,
         random_change=random_change,
         random_solution=random_solution,
-        objective_function=objective_function
+        objective_function=objective_function,
+        max_trials=max_trials
     )
 
-    hill_climb.run(max_trials=1000)
+    hill_climb.run()
 
-    print('\n')
+    print()
 
     # ejecutar evolution strategy
     evolution_strategy = MhEvolutionStrategy(
@@ -27,15 +29,27 @@ def main():
         step=step,
         random_change=random_change,
         random_solution=random_solution,
-        objective_function=objective_function
+        objective_function=objective_function,
+        max_trials=max_trials,
     )
 
     evolution_strategy.run(
-        max_trials=1000,
         generational=True,
         generation_size=100,
         best_references=50
     )
+
+    print()
+
+    random_search = MhRandomSearch(
+        data=data,
+        step=step,
+        max_trials=max_trials,
+        random_solution=random_solution,
+        objective_function=objective_function
+    )
+
+    random_search.run()
 
 
 if __name__ == '__main__':
